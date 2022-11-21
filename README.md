@@ -18,7 +18,7 @@
 
 ## Features
 List the ready features here:
-- User : SignUp / Login
+- User : SignUp / Login with JWT
 - Order:  CRUD
 - Factory: Generate serial numbers / change status .....
 

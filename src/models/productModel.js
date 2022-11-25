@@ -11,9 +11,12 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: "In_Order",
     },
     serialNumber: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
+      isUUID: {
+        msg: "The serial number must be UUID format",
+      },
       unique: {
-        msg: "The username already exist",
+        msg: "The serial number must unique",
       },
     },
   });

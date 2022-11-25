@@ -1,6 +1,6 @@
 // import data from src
 const { ValidationError } = require("sequelize");
-const { ModelOrder, ModelUser } = require("../src/models/dbConfig");
+const { ModelOrder, ModelUser } = require("../config/dbConfig");
 
 //oneToMany
 const adminIndex = (req, res) => {
@@ -20,38 +20,46 @@ const adminIndex = (req, res) => {
     });
 };
 
-//index method
-const orderIndex = (req, res) => {
-  ModelOrder.findAll()
-    .then((orderList) => {
-      const message =
-        "Success, the order's list has been successfully charged.";
-      res.json({ message, data: orderList });
-    })
-    .catch((error) => {
-      const message = "Error, the order's list has not been charged";
-      res.status(500).json({ message, data: error });
+//index order method
+const orderIndex = async (req, res, next) => {
+  try {
+    const orders = await ModelOrder.findAll();
+    res.status(200).json({
+      message: "Success, the order's list has been successfully charged",
+      orders,
     });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
-//show method
-const oderShow = (req, res) => {
-  ModelOrder.findByPk(req.params.id)
-    .then((order) => {
-      if (order === null) {
-        return res.status(404).json({ message: "The order can not be null" });
-      }
-      const message = `Success, the order id n° ${order.id} has been successfully charged.`;
-      res.json({ message, data: order });
-    })
-    .catch((error) => {
-      const message = "Error, the order has not been charged";
-      res.status(500).json({ message, data: error });
+//show order method
+const oderShow = async (req, res, next) => {
+  const orderId = req.params.id;
+  const order = await ModelOrder.findByPk(orderId);
+  try {
+    if (!order) {
+      const error = new Error("Could not find this order.");
+      error.statusCode = 404;
+      throw error;
+    }
+    res.status(200).json({
+      message: `Success, the order id n° ${order.id} has been successfully charged.`,
+      order,
     });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
 //create method
-const orderCreate = (req, res) => {
+const orderCreate = (req, res, next) => {
   //check if userId exist
   const { user_id } = req.body;
   ModelUser.findOne({ where: user_id }).then((user) => {
@@ -87,12 +95,17 @@ const orderUpdate = (req, res) => {
       return ModelOrder.update(req.body, { where: { id: id } })
         .then((_) => {
           ModelOrder.findByPk(id).then((order) => {
+            //console.log(order.status);
             if (order === null) {
-              return res
-                .status(404)
-                .json({ message: "The order can not be null" });
+              return res.status(404).json({
+                message: "Sorry the product can't be null",
+              });
+            } else if (order.status !== "In_Order") {
+              return res.status(404).json({
+                message: "Sorry the product is already in production",
+              });
             }
-            const message = `The order ${order.name} has been modificated.`;
+            const message = `The order ${order.id} has been modificated.`;
             res.json({ message, data: order });
           });
         })
@@ -118,6 +131,10 @@ const orderDelete = (req, res) => {
     .then((order) => {
       if (order === null) {
         return res.status(404).json({ message: "The order can not be null" });
+      } else if (order.status !== "In_Order") {
+        return res
+          .status(404)
+          .json({ message: "Sorry the product is already in production" });
       }
       const orderDeleted = order;
       return ModelOrder.destroy({

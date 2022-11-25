@@ -9,6 +9,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
+      validate: {
+        notEmpty: {
+          msg: "promotion cannot be empty, true or false",
+        },
+        isIn: {
+          args: [["true", "false"]],
+          msg: "Promotion is boolean , choose true or false",
+        },
+      },
     },
 
     quantity: {
@@ -16,6 +25,9 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: false,
       validate: {
+        isInt: {
+          msg: "The quantity must be an integer",
+        },
         min: {
           args: [1],
           msg: "The quantity cannot be under 0",
@@ -31,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
 
     price: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       set: function (price) {
         if (this.quantity > 50) {
           if (this.promotion === true) {
@@ -46,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       },
     },
-    statut: {
+    status: {
       type: DataTypes.STRING,
       allowNull: true,
       defaultValue: "In_Order",

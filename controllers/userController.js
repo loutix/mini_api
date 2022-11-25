@@ -1,5 +1,5 @@
 const { ValidationError } = require("sequelize");
-const { ModelUser } = require("../src/models/dbConfig");
+const { ModelUser } = require("../config/dbConfig");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const privateKey = require("../auth/private_key");
@@ -13,6 +13,13 @@ const signUpUser = (req, res) => {
     .then((user) => {
       const message = `The new user with id n° ${user.id} has been created.`;
       res.json({ message, data: user });
+    })
+    .catch((error) => {
+      if (error instanceof ValidationError) {
+        return res.status(400).json({ message: error.message });
+      }
+      const message = "The user has not been created";
+      res.status(500).json({ message });
     });
 };
 
@@ -24,7 +31,6 @@ const loginUser = (req, res) => {
         const message = "The username does not exist";
         return res.status(404).json({ message });
       }
-
       bcrypt
         .compare(req.body.password, user.password)
         .then((isPasswordValid) => {

@@ -1,11 +1,17 @@
 const bodyParser = require("body-parser");
 const express = require("express");
 const morgan = require("morgan");
-const orderRoutes = require("./routes/orderRoutes.js");
-const sequelize = require("./src/models/dbConfig");
-
+const orderRoutes = require("./routes/routes");
+const sequelize = require("./config/dbConfig");
 const app = express();
+
+const port = process.env.PORT || 5500;
+
 app.use(bodyParser.json());
+
+app.get("/loic", (req, res) => {
+  res.json("hello, loïc");
+});
 
 app
   .use(morgan("dev"))
@@ -18,6 +24,4 @@ app
 
 sequelize.initDb();
 
-app.listen(process.env.NODE_PORT || 3000, () =>
-  console.log(`server started: http://localhost:${process.env.NODE_PORT}`)
-);
+app.listen(port, () => console.log(`server started: http://localhost:${port}`));

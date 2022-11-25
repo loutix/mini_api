@@ -1,6 +1,6 @@
 const bodyParser = require("body-parser");
 const express = require("express");
-const morgan = require("morgan");
+//const morgan = require("morgan");
 const orderRoutes = require("./routes/routes");
 const sequelize = require("./config/dbConfig");
 const app = express();
@@ -9,7 +9,7 @@ const port = process.env.PORT || 5500;
 app.use(bodyParser.json());
 
 app
-  .use(morgan("dev"))
+  //.use(morgan("dev"))
   .use("/api/mini", orderRoutes)
 
   //errors management

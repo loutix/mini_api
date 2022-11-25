@@ -15,9 +15,9 @@ const { callFactory } = require("../src/factory/productFactory");
 const auth = require("../auth/auth");
 
 // les routes orders
-router.get("/", (req, res) => {
-  res.send("root of Server express API-MINI api/order");
-});
+// router.get("/admin", (req, res) => {
+//   res.send("root of Server express API-MINI api/order");
+// });
 
 router.get("/order/admin", auth, adminIndex);
 router.get("/order/index", auth, orderIndex);

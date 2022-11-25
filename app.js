@@ -6,12 +6,7 @@ const sequelize = require("./config/dbConfig");
 const app = express();
 
 const port = process.env.PORT || 5500;
-
 app.use(bodyParser.json());
-
-app.get("/loic", (req, res) => {
-  res.json("hello, loïc");
-});
 
 app
   .use(morgan("dev"))

@@ -8,6 +8,10 @@ const app = express();
 const port = process.env.PORT || 5500;
 app.use(bodyParser.json());
 
+app.get("/", (req, res) => {
+  res.json("hello enfin !!");
+});
+
 app
   //.use(morgan("dev"))
   .use("/api/mini", orderRoutes)

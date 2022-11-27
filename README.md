@@ -1,22 +1,13 @@
 # MINI_API
 
-## Table of Contents
-
-- [Technologies Used](#technologies-used)
-- [Features](#features)
-- [Setup](#setup)
-- [Project Status](#project-status)
-- [Room for Improvement](#room-for-improvement)
-<!-- * [License](#license) -->
-
 ## Technologies Used
 
-- nodeJS
-- express JS
-- mariaDB
-- sequelize
-- jest
-- supertest
+- Node.js
+- Express.js
+- MariaDB
+- Sequelize
+- Jest
+- Supertest
 
 ## Features
 

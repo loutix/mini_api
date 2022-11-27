@@ -1,26 +1,30 @@
-const bodyParser = require("body-parser");
 const express = require("express");
-//const morgan = require("morgan");
+const bodyParser = require("body-parser");
+const morgan = require("morgan");
 const orderRoutes = require("./routes/routes");
-const sequelize = require("./config/dbConfig");
+
 const app = express();
 
-const port = process.env.PORT || 5500;
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  res.json("hello enfin !!");
+  res.json({
+    routes: "/api/mini",
+    factory: "/factory",
+    orders: "/order/index",
+    user: "/user/signup",
+  });
 });
 
 app
-  //.use(morgan("dev"))
+  .use(morgan("dev"))
   .use("/api/mini", orderRoutes)
-
-  //errors management
   .use(({ res }) => {
     res.status(404).json({ message: "Sorry the page does not exist!" });
   });
 
-sequelize.initDb();
+//sequelize.initDb();
+module.exports = app;
 
-app.listen(port, () => console.log(`server started: http://localhost:${port}`));
+// const init = sequelize.initDb();
+// module.exports = { app, init };

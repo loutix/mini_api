@@ -5,22 +5,26 @@ module.exports = (req, res, next) => {
   const authorizationHeader = req.headers.authorization;
 
   if (!authorizationHeader) {
-    const message = `Vous n'avez pas fourni de jeton d'authentification. Ajoutez-en un dans l'en-tête de la requête.`;
+    const message = `You must give a JWT authentification.`;
     return res.status(401).json({ message });
   }
   //split the bearer
   const token = authorizationHeader.split(" ")[1];
+  // console.log(token);
   const decodedToken = jwt.verify(token, privateKey, (error, decodedToken) => {
     if (error) {
-      const message = `L'utilisateur n'est pas autorisé à accèder à cette ressource.`;
+      const message = `The user do not have the possibilty to acces at this page`;
       return res.status(401).json({ message, data: error });
     }
 
     const userId = decodedToken.userId;
     if (req.body.userId && req.body.userId !== userId) {
-      const message = `L'identifiant de l'utilisateur est invalide.`;
+      const message = `The user id is not valid`;
       res.status(401).json({ message });
     } else {
+      req.auth = {
+        user_id: userId,
+      };
       next();
     }
   });

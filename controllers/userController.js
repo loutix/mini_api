@@ -11,13 +11,14 @@ const signUpUser = (req, res) => {
     .hash(password, 5)
     .then((hash) => ModelUser.create({ username: username, password: hash }))
     .then((user) => {
-      const message = `The new user with id n° ${user.id} has been created.`;
+      const message = `The new user with has been created.`;
       res.json({ message, data: user });
     })
     .catch((error) => {
       if (error instanceof ValidationError) {
         return res.status(400).json({ message: error.message });
       }
+      console.error(error);
       const message = "The user has not been created";
       res.status(500).json({ message });
     });
@@ -40,7 +41,7 @@ const loginUser = (req, res) => {
           }
           // create the JWT
           const token = jwt.sign({ userId: user.id }, privateKey, {
-            expiresIn: "48h",
+            expiresIn: "240h",
           });
 
           const message = "Succes the user is login";

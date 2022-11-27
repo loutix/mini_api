@@ -1,24 +1,6 @@
 // import data from src
 const { ValidationError } = require("sequelize");
-const { ModelOrder, ModelUser } = require("../config/dbConfig");
-
-//oneToMany
-const adminIndex = (req, res) => {
-  ModelUser.findAll({
-    attributes: ["id", "username"],
-    include: [{ model: ModelOrder }],
-    where: { id: 1 },
-  })
-    .then((orderList) => {
-      const message =
-        "Success, the order's list has been successfully charged.";
-      res.json({ message, data: orderList });
-    })
-    .catch((error) => {
-      const message = "Error, the order's list has not been charged";
-      res.status(500).json({ message, data: error });
-    });
-};
+const { ModelOrder, ModelUser, ModelProduct } = require("../config/dbConfig");
 
 //index order method
 const orderIndex = async (req, res, next) => {
@@ -39,7 +21,10 @@ const orderIndex = async (req, res, next) => {
 //show order method
 const oderShow = async (req, res, next) => {
   const orderId = req.params.id;
-  const order = await ModelOrder.findByPk(orderId);
+  const order = await ModelOrder.findOne({
+    where: { id: orderId },
+    include: { model: ModelProduct },
+  });
   try {
     if (!order) {
       const error = new Error("Could not find this order.");
@@ -61,10 +46,10 @@ const oderShow = async (req, res, next) => {
 //create method
 const orderCreate = (req, res, next) => {
   //check if userId exist
-  const { user_id } = req.body;
+  const { user_id } = req.auth;
   ModelUser.findOne({ where: user_id }).then((user) => {
     if (user) {
-      ModelOrder.create(req.body)
+      ModelOrder.create({ ...req.body, user_id })
         .then((order) => {
           const message = `The order id n° ${order.id} has been created.`;
           res.json({ message, data: order });
@@ -132,9 +117,9 @@ const orderDelete = (req, res) => {
       if (order === null) {
         return res.status(404).json({ message: "The order can not be null" });
       } else if (order.status !== "In_Order") {
-        return res
-          .status(404)
-          .json({ message: "Sorry the product is already in production" });
+        return res.status(404).json({
+          message: "Sorry the product is already in production or delivery",
+        });
       }
       const orderDeleted = order;
       return ModelOrder.destroy({
@@ -151,7 +136,6 @@ const orderDelete = (req, res) => {
 };
 
 module.exports = {
-  adminIndex,
   orderIndex,
   oderShow,
   orderCreate,

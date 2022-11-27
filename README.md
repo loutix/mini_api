@@ -15,6 +15,8 @@
 - express JS
 - mariaDB
 - sequelize
+- jest
+- supertest
 
 ## Features
 
@@ -22,7 +24,7 @@ List the ready features here:
 
 - User : SignUp / Login with JWT
 - Order: CRUD
-- Factory: Generate serial numbers / change status .....
+- Factory: Generate serial numbers / change status
 
 ## Setup
 
